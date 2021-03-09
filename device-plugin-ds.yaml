@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: device-plugin-example
-        image: onuryilmaz/k8s-device-plugin-example:v1
+        image: onuryilmaz/k8s-device-plugin-example:v2
         securityContext:
           privileged: true
         volumeMounts:

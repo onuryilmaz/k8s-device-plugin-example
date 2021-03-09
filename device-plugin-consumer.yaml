@@ -5,7 +5,7 @@ metadata:
 spec:
   containers:
   - name: pause
-    image: k8s.gcr.io/pause:2.0
+    image: busybox
     resources:
       limits:
         extend-k8s.io/example: 1
