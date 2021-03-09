@@ -12,20 +12,6 @@ import (
 
 type ExamplePlugin struct{}
 
-func randomDevices() []*Device {
-
-	devices := make([]*Device, 0)
-
-	for i := 0; i < rand.Intn(5); i++ {
-		devices = append(devices, &Device{
-			ID:     randstr.Hex(16),
-			Health: Healthy,
-		})
-	}
-
-	return devices
-}
-
 func (dp *ExamplePlugin) ListAndWatch(e *Empty, s DevicePlugin_ListAndWatchServer) error {
 
 	s.Send(&ListAndWatchResponse{Devices: randomDevices()})
@@ -54,4 +40,18 @@ func (ExamplePlugin) PreStartContainer(context.Context, *PreStartContainerReques
 
 func (dp *ExamplePlugin) GetPreferredAllocation(context.Context, *PreferredAllocationRequest) (*PreferredAllocationResponse, error) {
 	return nil, nil
+}
+
+func randomDevices() []*Device {
+
+	devices := make([]*Device, 0)
+
+	for i := 0; i < rand.Intn(5)+1; i++ {
+		devices = append(devices, &Device{
+			ID:     randstr.Hex(16),
+			Health: Healthy,
+		})
+	}
+
+	return devices
 }

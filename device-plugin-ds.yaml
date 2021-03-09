@@ -4,6 +4,7 @@ metadata:
   labels:
     name: device-plugin-example
   name: device-plugin-example
+  namespace: kube-system
 spec:
   selector:
     matchLabels:

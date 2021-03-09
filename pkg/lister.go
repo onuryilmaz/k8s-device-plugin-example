@@ -11,11 +11,8 @@ func (Lister) GetResourceNamespace() string {
 }
 
 func (Lister) Discover(pluginListCh chan dpm.PluginNameList) {
-	var plugins = make(dpm.PluginNameList, 0)
 
-	plugins = append(plugins, "example")
-
-	pluginListCh <- plugins
+	pluginListCh <- dpm.PluginNameList{"example"}
 }
 
 func (Lister) NewPlugin(deviceID string) dpm.PluginInterface {
