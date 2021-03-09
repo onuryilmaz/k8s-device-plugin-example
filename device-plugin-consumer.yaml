@@ -6,6 +6,7 @@ spec:
   containers:
   - name: pause
     image: busybox
+    command: ["/bin/sleep", "100d"]
     resources:
       limits:
         extend-k8s.io/example: 1
