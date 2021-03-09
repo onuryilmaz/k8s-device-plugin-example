@@ -2,41 +2,46 @@ package pkg
 
 import (
 	"context"
+	"math/rand"
 	"time"
+
+	"github.com/thanhpk/randstr"
 
 	. "k8s.io/kubelet/pkg/apis/deviceplugin/v1beta1"
 )
 
 type ExamplePlugin struct{}
 
-func (dp *ExamplePlugin) ListAndWatch(e *Empty, s DevicePlugin_ListAndWatchServer) error {
+func randomDevices() []*Device {
 
-	s.Send(&ListAndWatchResponse{Devices: []*Device{&Device{
-		ID:     time.Now().String(),
-		Health: Healthy,
-	}}})
+	devices := make([]*Device, 0)
 
-	for {
-		time.Sleep(3 * time.Second)
-
-		s.Send(&ListAndWatchResponse{Devices: []*Device{&Device{
-			ID:     time.Now().String(),
+	for i := 0; i < rand.Intn(5); i++ {
+		devices = append(devices, &Device{
+			ID:     randstr.Hex(16),
 			Health: Healthy,
-		}}})
+		})
 	}
+
+	return devices
 }
 
-func (dp *ExamplePlugin) GetPreferredAllocation(context.Context, *PreferredAllocationRequest) (*PreferredAllocationResponse, error) {
+func (dp *ExamplePlugin) ListAndWatch(e *Empty, s DevicePlugin_ListAndWatchServer) error {
 
-	return &PreferredAllocationResponse{}, nil
+	s.Send(&ListAndWatchResponse{Devices: randomDevices()})
+
+	for {
+		time.Sleep(5 * time.Second)
+		s.Send(&ListAndWatchResponse{Devices: randomDevices()})
+	}
 }
 
 func (dp *ExamplePlugin) Allocate(c context.Context, r *AllocateRequest) (*AllocateResponse, error) {
 
-	responses := []*ContainerAllocateResponse{{Envs: map[string]string{"k8s-device-plugin-example": time.Now().String()}}}
+	envs := map[string]string{"K8S_DEVICE_PLUGIN_EXAMPLE": randstr.Hex(16)}
+	responses := []*ContainerAllocateResponse{{Envs: envs}}
 
 	return &AllocateResponse{ContainerResponses: responses}, nil
-
 }
 
 func (ExamplePlugin) GetDevicePluginOptions(context.Context, *Empty) (*DevicePluginOptions, error) {
@@ -44,5 +49,9 @@ func (ExamplePlugin) GetDevicePluginOptions(context.Context, *Empty) (*DevicePlu
 }
 
 func (ExamplePlugin) PreStartContainer(context.Context, *PreStartContainerRequest) (*PreStartContainerResponse, error) {
+	return nil, nil
+}
+
+func (dp *ExamplePlugin) GetPreferredAllocation(context.Context, *PreferredAllocationRequest) (*PreferredAllocationResponse, error) {
 	return nil, nil
 }
